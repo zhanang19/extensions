@@ -1,33 +1,21 @@
-import { ActionPanel, Icon, List, OpenAction, preferences, showToast, ToastStyle } from "@raycast/api";
-import { WebClient } from "@slack/web-api";
-import _ from "lodash";
-import { useEffect, useState } from "react";
+import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction, showToast, ToastStyle } from "@raycast/api";
+import { useUsers } from "./useUsers";
 import { User } from "./types";
-import { getFormattedOffset, getAvatar, getStatusEmoji } from "./utils";
+import { getAccessoryTitle, getIcon, getAccessoryIcon } from "./utils";
 
 export default function Command() {
-  const { data, error } = useTimezones();
+  const { users, error, isLoading } = useUsers();
 
   if (error) {
     showToast(ToastStyle.Failure, "Failed fetching users", error.message);
   }
 
   return (
-    <List isLoading={data === undefined}>
-      {data && Object.entries(data).map(([timezone, users]) => <TimezoneListSection key={timezone} users={users} />)}
-    </List>
-  );
-}
-
-function TimezoneListSection(props: { users: User[] }) {
-  const firstUser = _.first(props.users);
-
-  return (
-    <List.Section title={firstUser?.timezoneLabel} subtitle={getFormattedOffset(firstUser)}>
-      {props.users.map((user) => (
-        <UserListItem key={user.id} user={user} />
+    <List isLoading={isLoading}>
+      {users?.map((u) => (
+        <UserListItem key={u.id} user={u} />
       ))}
-    </List.Section>
+    </List>
   );
 }
 
@@ -40,63 +28,41 @@ function UserListItem(props: { user: User }) {
     <List.Item
       title={props.user.realName}
       subtitle={`@${props.user.name}`}
-      icon={getAvatar(props.user)}
-      accessoryTitle={props.user.statusText}
-      accessoryIcon={getStatusEmoji(props.user)}
-      actions={
-        <ActionPanel>
-          <SendMessageAction user={props.user} />
-        </ActionPanel>
-      }
+      icon={getIcon(props.user)}
+      accessoryTitle={getAccessoryTitle(props.user)}
+      accessoryIcon={getAccessoryIcon(props.user)}
+      actions={<Actions user={props.user} />}
     />
+  );
+}
+
+function Actions(props: { user: User }) {
+  return (
+    <ActionPanel title={props.user.name}>
+      <ActionPanel.Section>
+        <SendMessageAction user={props.user} />
+      </ActionPanel.Section>
+      <ActionPanel.Section>
+        {props.user.realName && (
+          <CopyToClipboardAction
+            title="Copy Display Name"
+            content={props.user.realName}
+            shortcut={{ modifiers: ["cmd"], key: "." }}
+          />
+        )}
+        {props.user.name && (
+          <CopyToClipboardAction
+            title="Copy Name"
+            content={props.user.name}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "." }}
+          />
+        )}
+      </ActionPanel.Section>
+    </ActionPanel>
   );
 }
 
 function SendMessageAction(props: { user: User }) {
   const deeplink = `slack://user?team=${props.user.teamId}&id=${props.user.id}`;
   return <OpenAction icon={Icon.Bubble} title="Send Message" target={deeplink} />;
-}
-
-const client = new WebClient(preferences.token.value as string);
-
-function useTimezones() {
-  const [timezoneToUsersMap, setTimezoneToUsersMap] = useState<_.Dictionary<User[]>>();
-  const [error, setError] = useState<Error>();
-
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const response = await client.users.list({ presence: true });
-
-        const map = _.chain(response.members)
-          .filter((m) => !m.is_bot)
-          .filter((m) => !m.deleted)
-          .filter((m) => m.name !== "slackbot")
-          .flatMap((m) => ({
-            id: m.id,
-            teamId: m.team_id,
-            realName: m.real_name,
-            name: m.name,
-            timezoneLabel: m.tz_label,
-            timezone: m.tz,
-            timezoneOffset: m.tz_offset,
-            avatarUrl: m.profile?.image_72,
-            statusEmoji: m.profile?.status_emoji,
-            statusText: m.profile?.status_text,
-          }))
-          .sortBy(["timezoneOffset", "realName"])
-          .groupBy("timezone")
-          .value();
-
-        setTimezoneToUsersMap(map);
-      } catch (error) {
-        console.error("Failed fetching users", error);
-        setError(error instanceof Error ? error : new Error("Something went wrong"));
-      }
-    }
-
-    fetchUsers();
-  }, []);
-
-  return { data: timezoneToUsersMap, error };
 }

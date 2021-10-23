@@ -1,31 +1,82 @@
 import { Icon, ImageMask } from "@raycast/api";
-import { codeToEmojiMap } from "./emojis";
 import { User } from "./types";
 
-export function getFormattedOffset(user?: User) {
+export function getIcon(user?: User) {
+  return user?.avatarUrl ? { source: user.avatarUrl, mask: ImageMask.Circle } : Icon.Person;
+}
+
+export function getAccessoryTitle(user?: User) {
+  const localTime = getLocalTime(user);
+  if (!localTime) {
+    return undefined;
+  }
+
+  return localTime.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
+export function getAccessoryIcon(user?: User) {
+  const localTime = getLocalTime(user);
+  if (!localTime) {
+    return undefined;
+  }
+
+  return dateToEmoji(localTime);
+}
+
+function getLocalTime(user?: User) {
   const offset = user?.timezoneOffset;
   if (!offset) {
     return undefined;
   }
 
-  const localTime = new Date(Date.now() + offset * 1000);
-  let result = localTime.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return new Date(Date.now() + offset * 1000);
+}
 
-  const offsetInHours = offset / 60 / 60 - 1;
-  if (offsetInHours === 0) {
-    result += ` (Your Timezone)`;
-  } else {
-    const formattedOffset = offsetInHours === 1 ? `${offsetInHours} Hour` : `${offsetInHours} Hours`;
-    result += ` (${formattedOffset})`;
+const hourToEmojiMap = new Map<number, string>([
+  [0, "🕛"],
+  [1, "🕐"],
+  [2, "🕑"],
+  [3, "🕒"],
+  [4, "🕓"],
+  [5, "🕔"],
+  [6, "🕕"],
+  [7, "🕖"],
+  [8, "🕗"],
+  [9, "🕘"],
+  [10, "🕙"],
+  [11, "🕚"],
+  [0.5, "🕧"],
+  [1.5, "🕜"],
+  [2.5, "🕝"],
+  [3.5, "🕞"],
+  [4.5, "🕟"],
+  [5.5, "🕠"],
+  [6.5, "🕡"],
+  [7.5, "🕢"],
+  [8.5, "🕣"],
+  [9.5, "🕤"],
+  [10.5, "🕥"],
+  [11.5, "🕦"],
+]);
+
+function dateToEmoji(date: Date) {
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  if (hours > 11) {
+    hours = hours - 12;
   }
 
-  return result;
-}
+  minutes = minutes / 60;
 
-export function getAvatar(user?: User) {
-  return user?.avatarUrl ? { source: user.avatarUrl, mask: ImageMask.Circle } : Icon.Person;
-}
+  if (minutes < 0.25) {
+    minutes = 0;
+  } else if (minutes >= 0.25 && minutes < 0.75) {
+    minutes = 0.5;
+  } else {
+    hours = hours === 11 ? 0 : hours + 1;
+    minutes = 0;
+  }
 
-export function getStatusEmoji(user?: User) {
-  return user?.statusEmoji ? codeToEmojiMap.get(user.statusEmoji) : undefined;
+  return hourToEmojiMap.get(hours + minutes);
 }

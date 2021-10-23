@@ -8,7 +8,7 @@
   "commands": [
     {
       "name": "index",
-      "title": "Team Timezones",
+      "title": "Search Users",
       "subtitle": "",
       "description": "Check the timezones of your colleagues",
       "mode": "view"
@@ -27,7 +27,12 @@
     "@raycast/api": "^1.25.0",
     "@slack/web-api": "^6.4.0",
     "@types/lodash": "^4.14.176",
-    "lodash": "^4.17.21"
+    "@types/node-localstorage": "^1.3.0",
+    "lodash": "^4.17.21",
+    "node-emoji-clock": "^0.1.0",
+    "node-localstorage": "^2.2.1",
+    "swr": "^1.0.1",
+    "use-async-effect": "^2.2.3"
   },
   "devDependencies": {
     "@types/node": "~16.10.0",
