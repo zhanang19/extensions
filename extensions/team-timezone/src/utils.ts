@@ -1,8 +1,39 @@
-import { Icon, ImageMask } from "@raycast/api";
-import { User } from "./types";
+import { Color, Icon, ImageMask } from "@raycast/api";
+import { Channel, ChannelType, User } from "./types";
+
+export function getSubtitle(user?: User) {
+  return user ? `@${user.name}` : undefined;
+}
+
+export function getSubtitleForChannel(channel: Channel) {
+  const count = channel.membersCount ?? 0;
+
+  if (count === 0) {
+    return undefined;
+  } else if (count === 1) {
+    return "1 Member";
+  } else {
+    return `${channel.membersCount} Members`;
+  }
+}
 
 export function getIcon(user?: User) {
   return user?.avatarUrl ? { source: user.avatarUrl, mask: ImageMask.Circle } : Icon.Person;
+}
+
+export function getIconForChannel(channel: Channel) {
+  let source: string;
+
+  switch (channel.type) {
+    case ChannelType.Private:
+      source = "private-channel.png";
+      break;
+    case ChannelType.Public:
+      source = "channel.png";
+      break;
+  }
+
+  return { source, tintColor: Color.SecondaryText };
 }
 
 export function getAccessoryTitle(user?: User) {
@@ -12,6 +43,10 @@ export function getAccessoryTitle(user?: User) {
   }
 
   return localTime.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
+export function getAcccessoryTitleForChannel(channel: Channel) {
+  return channel.description;
 }
 
 export function getAccessoryIcon(user?: User) {

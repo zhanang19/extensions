@@ -1,18 +1,29 @@
 import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction, showToast, ToastStyle } from "@raycast/api";
-import { useUsers } from "./useUsers";
+import { useUsers } from "./slack";
 import { User } from "./types";
-import { getAccessoryTitle, getIcon, getAccessoryIcon } from "./utils";
+import { getAccessoryTitle, getIcon, getAccessoryIcon, getSubtitle } from "./utils";
+import { SWRConfig } from "swr";
+import { cacheConfig } from "./cache";
 
 export default function Command() {
-  const { users, error, isLoading } = useUsers();
+  return (
+    <SWRConfig value={cacheConfig}>
+      <UserList />
+    </SWRConfig>
+  );
+}
+
+function UserList() {
+  const { data, error, isValidating } = useUsers();
 
   if (error) {
-    showToast(ToastStyle.Failure, "Failed fetching users", error.message);
+    console.error(error);
+    showToast(ToastStyle.Failure, "Failed retrieving users", error.message);
   }
 
   return (
-    <List isLoading={isLoading}>
-      {users?.map((u) => (
+    <List isLoading={isValidating}>
+      {data?.map((u) => (
         <UserListItem key={u.id} user={u} />
       ))}
     </List>
@@ -20,27 +31,23 @@ export default function Command() {
 }
 
 function UserListItem(props: { user: User }) {
-  if (!props.user.realName) {
-    return null;
-  }
-
-  return (
+  return props.user.realName ? (
     <List.Item
       title={props.user.realName}
-      subtitle={`@${props.user.name}`}
+      subtitle={getSubtitle(props.user)}
       icon={getIcon(props.user)}
       accessoryTitle={getAccessoryTitle(props.user)}
       accessoryIcon={getAccessoryIcon(props.user)}
       actions={<Actions user={props.user} />}
     />
-  );
+  ) : null;
 }
 
 function Actions(props: { user: User }) {
   return (
     <ActionPanel title={props.user.name}>
       <ActionPanel.Section>
-        <SendMessageAction user={props.user} />
+        <OpenChatAction user={props.user} />
       </ActionPanel.Section>
       <ActionPanel.Section>
         {props.user.realName && (
@@ -62,7 +69,7 @@ function Actions(props: { user: User }) {
   );
 }
 
-function SendMessageAction(props: { user: User }) {
+function OpenChatAction(props: { user: User }) {
   const deeplink = `slack://user?team=${props.user.teamId}&id=${props.user.id}`;
-  return <OpenAction icon={Icon.Bubble} title="Send Message" target={deeplink} />;
+  return <OpenAction icon={Icon.Bubble} title="Open Chat" target={deeplink} />;
 }

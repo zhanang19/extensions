@@ -1,0 +1,33 @@
+{
+  "name": "conditional-form",
+  "title": "Conditional Form",
+  "description": "",
+  "icon": "command-icon.png",
+  "author": "thomas",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "index",
+      "title": "Submit Form",
+      "subtitle": "",
+      "description": "Template to submit a form",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "~16.10.0",
+    "@types/react": "^17.0.28",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop"
+  }
+}
