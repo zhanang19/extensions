@@ -1,6 +1,6 @@
-import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction } from "@raycast/api";
+import { ActionPanel, CopyToClipboardAction, List } from "@raycast/api";
 import { useChannels } from "./slack";
-import { Channel, User } from "./types";
+import { Channel } from "./types";
 import { SWRConfig } from "swr";
 import { cacheConfig } from "./cache";
 import { getAcccessoryTitleForChannel, getIconForChannel, getSubtitleForChannel, showError } from "./utils";
@@ -42,7 +42,6 @@ function ChannelListItem(props: { channel: Channel }) {
 function Actions(props: { channel: Channel }) {
   return (
     <ActionPanel title={`#${props.channel.name}`}>
-      <ActionPanel.Section>{/* <SendMessageAction user={props.user} /> */}</ActionPanel.Section>
       <ActionPanel.Section>
         {props.channel.name && (
           <CopyToClipboardAction
@@ -54,9 +53,4 @@ function Actions(props: { channel: Channel }) {
       </ActionPanel.Section>
     </ActionPanel>
   );
-}
-
-function SendMessageAction(props: { user: User }) {
-  const deeplink = `slack://user?team=${props.user.teamId}&id=${props.user.id}`;
-  return <OpenAction icon={Icon.Bubble} title="Send Message" target={deeplink} />;
 }
