@@ -1,4 +1,4 @@
-import { Color, Icon, ImageMask } from "@raycast/api";
+import { Color, Icon, ImageMask, showToast, ToastStyle } from "@raycast/api";
 import { Channel, ChannelType, User } from "./types";
 
 export function getSubtitle(user?: User) {
@@ -61,7 +61,7 @@ export function getAccessoryIcon(user?: User) {
 function getLocalTime(user?: User) {
   const offset = user?.timezoneOffset;
   if (!offset) {
-    return undefined;
+    return new Date();
   }
 
   return new Date(Date.now() + offset * 1000);
