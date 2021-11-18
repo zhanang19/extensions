@@ -1,7 +1,7 @@
-import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction, showToast, ToastStyle } from "@raycast/api";
+import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction } from "@raycast/api";
 import { useUsers } from "./slack";
 import { User } from "./types";
-import { getAccessoryTitle, getIcon, getAccessoryIcon, getSubtitle } from "./utils";
+import { getAccessoryTitle, getIcon, getAccessoryIcon, getSubtitle, showError } from "./utils";
 import { SWRConfig } from "swr";
 import { cacheConfig } from "./cache";
 
@@ -16,10 +16,7 @@ export default function Command() {
 function UserList() {
   const { data, error, isValidating } = useUsers();
 
-  if (error) {
-    console.error(error);
-    showToast(ToastStyle.Failure, "Failed retrieving users", error.message);
-  }
+  showError(error, "Failed retrieving users");
 
   return (
     <List isLoading={isValidating}>

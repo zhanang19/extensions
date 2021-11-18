@@ -1,9 +1,9 @@
-import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction, showToast, ToastStyle } from "@raycast/api";
+import { ActionPanel, CopyToClipboardAction, Icon, List, OpenAction } from "@raycast/api";
 import { useChannels } from "./slack";
 import { Channel, User } from "./types";
 import { SWRConfig } from "swr";
 import { cacheConfig } from "./cache";
-import { getAcccessoryTitleForChannel, getIconForChannel, getSubtitleForChannel } from "./utils";
+import { getAcccessoryTitleForChannel, getIconForChannel, getSubtitleForChannel, showError } from "./utils";
 
 export default function Command() {
   return (
@@ -16,10 +16,7 @@ export default function Command() {
 function ChannelList() {
   const { data, error, isValidating } = useChannels();
 
-  if (error) {
-    console.error(error);
-    showToast(ToastStyle.Failure, "Failed retrieving channels", error.message);
-  }
+  showError(error, "Failed retrieving channels");
 
   return (
     <List isLoading={isValidating}>
