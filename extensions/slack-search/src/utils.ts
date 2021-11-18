@@ -133,4 +133,8 @@ export async function showError<T>(
     : undefined;
 
   await showToast(ToastStyle.Failure, title, message);
+
+  if (process.env.NODE_ENV === "development") {
+    console.error(resolvedError);
+  }
 }
