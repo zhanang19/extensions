@@ -10,14 +10,14 @@
       "name": "searchUsers",
       "title": "Search Users",
       "subtitle": "Slack",
-      "description": "Check the timezones of your colleagues",
+      "description": "Search for users in your Slack workspace",
       "mode": "view"
     },
     {
       "name": "searchChannels",
       "title": "Search Channels",
       "subtitle": "Slack",
-      "description": "Check the timezones of your colleagues",
+      "description": "Search for channels in your Slack workspace",
       "mode": "view"
     }
   ],
