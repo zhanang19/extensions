@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "philips-hue-controls",
+  "title": "Philips Hue Controls",
+  "description": "Control your Philips Hue lightbulbs with ease",
+  "icon": "extension.png",
+  "author": "thomas",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "turnOffAllLights",
+      "title": "Turn Off All Lights",
+      "subtitle": "Hue",
+      "description": "Turn off all the lights",
+      "mode": "no-view"
+    },
+    {
+      "name": "controlLights",
+      "title": "Control Lights",
+      "subtitle": "Hue",
+      "description": "List, search and control lights",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "ipAddress",
+      "title": "Bridge IP Address",
+      "description": "The IP address of your Philips Hue bridge",
+      "type": "textfield",
+      "required": true
+    },
+    {
+      "name": "username",
+      "title": "Bridge Username",
+      "description": "The username of your Philips Hue bridge",
+      "type": "textfield",
+      "required": true
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.28.0",
+    "dot-prop": "^6.0.1",
+    "node-hue-api": "^5.0.0-beta.8",
+    "node-localstorage": "^2.2.1",
+    "swr": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "~16.10.0",
+    "@types/node-localstorage": "^1.3.0",
+    "@types/react": "^17.0.28",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop"
+  }
+}
