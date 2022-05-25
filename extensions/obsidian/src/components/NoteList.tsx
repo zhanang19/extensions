@@ -32,7 +32,7 @@ export function NoteListItem(props: { note: Note; vaultPath: string; key: number
 
 export function NoteList(props: {
   notes: Note[] | undefined;
-  action?: (note: Note) => React.ReactFragment;
+  action?: (note: Note) => React.ReactElement;
   isLoading?: boolean;
   vaultPath: string;
 }) {

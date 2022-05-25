@@ -74,7 +74,7 @@ export function useRefresher<T>(
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [timestamp, setTimestamp] = useState<Date>(new Date());
-  const depsAll = [timestamp];
+  const depsAll: unknown[] = [timestamp];
   if (deps) {
     for (const d of deps) {
       depsAll.push(d);

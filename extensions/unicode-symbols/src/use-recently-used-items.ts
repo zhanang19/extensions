@@ -34,8 +34,10 @@ const useStateAndLocalStorage = <T, _ = void>(
     };
   }, []);
 
-  const setStateAndLocalStorage = useCallback((updater) => {
+  const setStateAndLocalStorage = useCallback((updater: SetStateAction<T>) => {
     setState((state) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TS struggles to infer the types as T could potentially be a function
       const newValue = typeof updater === "function" ? updater(state) : updater;
       setLocalStorageItem(key, JSON.stringify(newValue));
       return newValue;
