@@ -38,7 +38,7 @@
       "type": "checkbox",
       "title": "Enabled Transformations",
       "description": "Enable the Camel Case Transformation",
-      "label": "Capital Case",
+      "label": "Camel Case",
       "default": true,
       "required": false
     },
